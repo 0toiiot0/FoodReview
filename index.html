@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>자리있어 — 모임하기 좋은 자리를 먼저 확인하세요</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Newsreader:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -25,7 +22,6 @@
     <span class="eyebrow reveal">약속 잡는 사람을 위한 서비스</span>
     <h1 class="reveal">이번엔 어디서<br>볼까요?</h1>
     <p class="lead reveal">여럿이 가도 만족할 자리인지, 후기를 먼저 확인하고 약속을 잡으세요.</p>
-    <hr class="reveal">
     <div class="hero-search reveal">
       <input type="text" placeholder="몇 명이서, 어디 근처에서 만나세요?" readonly>
       <button class="cta-btn" type="button">자리 찾기 ▸</button>
@@ -34,48 +30,93 @@
 </section>
 
 <!-- ================= POPULAR RESTAURANTS ================= -->
-<section class="restaurants">
+<section class="restaurants-section">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">지금 인기 있는 곳</span>
-      <h2>인기 맛집</h2>
+      <div>
+        <span class="eyebrow">지금 인기 있는 곳</span>
+        <h2>인기 <span class="accent-word">맛집</span></h2>
+      </div>
+      <a class="btn-pill btn-pill-outline" href="restaurants.html">맛집 더 보기 ▸</a>
     </div>
     <div class="card-grid">
       <div class="card reveal">
-        <div class="card-thumb"></div>
-        <span class="rating">4.6</span>
-        <h3>을지로 노포집</h3>
-        <p class="meta">을지로3가 · 한식</p>
+        <div class="card-thumb">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=70" alt="을지로 노포집" loading="lazy">
+          <button class="card-like" type="button" aria-label="찜하기">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.5-9.8-8.6C.6 9.6 1.6 6 5 5c2.1-.6 4 .4 5 2 1-1.6 2.9-2.6 5-2 3.4 1 4.4 4.6 2.8 7.4C19.2 16.5 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <span class="rating-group"><svg class="star-icon"><use href="#star-shape"></use></svg><span class="rating">4.6</span></span>
+          <h3>을지로 노포집</h3>
+          <p class="meta">을지로3가 · 한식</p>
+        </div>
       </div>
       <div class="card reveal">
-        <div class="card-thumb"></div>
-        <span class="rating">4.4</span>
-        <h3>합정 화덕피자</h3>
-        <p class="meta">합정동 · 이탈리안</p>
+        <div class="card-thumb">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=70" alt="합정 화덕피자" loading="lazy">
+          <button class="card-like" type="button" aria-label="찜하기">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.5-9.8-8.6C.6 9.6 1.6 6 5 5c2.1-.6 4 .4 5 2 1-1.6 2.9-2.6 5-2 3.4 1 4.4 4.6 2.8 7.4C19.2 16.5 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <span class="rating-group"><svg class="star-icon"><use href="#star-shape"></use></svg><span class="rating">4.4</span></span>
+          <h3>합정 화덕피자</h3>
+          <p class="meta">합정동 · 이탈리안</p>
+        </div>
       </div>
       <div class="card reveal">
-        <div class="card-thumb"></div>
-        <span class="rating">4.5</span>
-        <h3>망원동 손칼국수</h3>
-        <p class="meta">망원동 · 한식</p>
+        <div class="card-thumb">
+          <img src="https://images.unsplash.com/photo-1618841557871-b4664fbf0cb3?w=800&q=70" alt="망원동 손칼국수" loading="lazy">
+          <button class="card-like" type="button" aria-label="찜하기">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.5-9.8-8.6C.6 9.6 1.6 6 5 5c2.1-.6 4 .4 5 2 1-1.6 2.9-2.6 5-2 3.4 1 4.4 4.6 2.8 7.4C19.2 16.5 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <span class="rating-group"><svg class="star-icon"><use href="#star-shape"></use></svg><span class="rating">4.5</span></span>
+          <h3>망원동 손칼국수</h3>
+          <p class="meta">망원동 · 한식</p>
+        </div>
       </div>
       <div class="card reveal">
-        <div class="card-thumb"></div>
-        <span class="rating">4.3</span>
-        <h3>성수 브런치클럽</h3>
-        <p class="meta">성수동 · 브런치</p>
+        <div class="card-thumb">
+          <img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?w=800&q=70" alt="성수 브런치클럽" loading="lazy">
+          <button class="card-like" type="button" aria-label="찜하기">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.5-9.8-8.6C.6 9.6 1.6 6 5 5c2.1-.6 4 .4 5 2 1-1.6 2.9-2.6 5-2 3.4 1 4.4 4.6 2.8 7.4C19.2 16.5 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <span class="rating-group"><svg class="star-icon"><use href="#star-shape"></use></svg><span class="rating">4.3</span></span>
+          <h3>성수 브런치클럽</h3>
+          <p class="meta">성수동 · 브런치</p>
+        </div>
       </div>
       <div class="card reveal">
-        <div class="card-thumb"></div>
-        <span class="rating">4.2</span>
-        <h3>광장시장 마약김밥</h3>
-        <p class="meta">종로 · 분식</p>
+        <div class="card-thumb">
+          <img src="https://images.unsplash.com/photo-1635363638580-c2809d049eee?w=800&q=70" alt="광장시장 마약김밥" loading="lazy">
+          <button class="card-like" type="button" aria-label="찜하기">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.5-9.8-8.6C.6 9.6 1.6 6 5 5c2.1-.6 4 .4 5 2 1-1.6 2.9-2.6 5-2 3.4 1 4.4 4.6 2.8 7.4C19.2 16.5 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <span class="rating-group"><svg class="star-icon"><use href="#star-shape"></use></svg><span class="rating">4.2</span></span>
+          <h3>광장시장 마약김밥</h3>
+          <p class="meta">종로 · 분식</p>
+        </div>
       </div>
       <div class="card reveal">
-        <div class="card-thumb"></div>
-        <span class="rating">4.7</span>
-        <h3>연남동 이자카야 하루</h3>
-        <p class="meta">연남동 · 이자카야</p>
+        <div class="card-thumb">
+          <img src="https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=800&q=70" alt="연남동 이자카야 하루" loading="lazy">
+          <button class="card-like" type="button" aria-label="찜하기">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.5-9.8-8.6C.6 9.6 1.6 6 5 5c2.1-.6 4 .4 5 2 1-1.6 2.9-2.6 5-2 3.4 1 4.4 4.6 2.8 7.4C19.2 16.5 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <span class="rating-group"><svg class="star-icon"><use href="#star-shape"></use></svg><span class="rating">4.7</span></span>
+          <h3>연남동 이자카야 하루</h3>
+          <p class="meta">연남동 · 이자카야</p>
+        </div>
       </div>
     </div>
   </div>
@@ -95,7 +136,7 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow">앞으로 만나게 될 기능</span>
-      <h2>서비스 특징</h2>
+      <h2>서비스 <span class="accent-word">특징</span></h2>
     </div>
     <div class="feature-list">
       <div class="feature-row reveal">

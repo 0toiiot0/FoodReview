@@ -18,13 +18,13 @@ A static one-page landing site for "자리있어" (a Korean food-review service 
 
 ## Design system constraints (from DESIGN.md)
 
-These are intentional, load-bearing constraints — don't casually "fix" or reintroduce dropped defaults:
+**As of 2026-08-20 the site follows an Airbnb-style design system.** The previous "no shadows/gradients/rounded corners, monochrome-only accent" ruleset (still visible in DESIGN.md's v1 history) was explicitly retired by the user and replaced with the following — these are the current load-bearing constraints:
 
-- **No shadows, gradients, or rounded corners anywhere** (the only gradient exception is the ticker's edge fade mask, which is a clip effect, not decoration).
-- **Only one accent mechanism**: contrast via `--ink` solid fills, not color. There is exactly one dark CTA button on the page (Hero); the footer is the only other fully-dark block.
-- Ratings are typeset as large serif numbers (`Newsreader`, weight 700) — never star icons/emoji for the rating value itself (an unused `#star-shape` SVG symbol exists in the markup but the rating display uses numerals).
-- Headings use `Gowun Batang` (serif), body/UI uses `Pretendard`. Only weights 400 and 700 are used — no in-between weights.
-- The ticker is the **only** persistent motion on the page (60–90s loop, pause on hover, fully stops under `prefers-reduced-motion`). Don't add other continuous animations — DESIGN.md calls this out explicitly as a rule other sections must not compete with.
+- **Shadows and rounded corners are the default**, not exceptions: cards use `border-radius: 12px` and a soft shadow (`--shadow-sm` → `--shadow-md` on hover), buttons/badges use pill radius (`999px`). Don't strip these back toward flat/square "for consistency with the old look" — that look is gone.
+- **Coral accent (`--accent`, `#FF385C` family) is the primary accent mechanism**, used repeatedly across CTAs, rating stars, active filters, and badges. Multiple CTA-style buttons on one page are fine now — the old "exactly one CTA" rule is retired. Keep radius/shadow/accent values consistent across `index.html` and `restaurants.html` even though they're styled by different CSS files (`style.css` vs `restaurants.css`).
+- Ratings are shown as **bold sans numerals (Pretendard 700) plus a coral star icon** — the `#star-shape` SVG symbol in the markup is now actually used (it was previously defined but unused). No serif numerals.
+- Headings and body/UI both use `Pretendard` only (the serif pairing — `Gowun Batang` for headings, `Newsreader` for numerals — was dropped; see DESIGN.md §3 for the reasoning). Weights 400/500/600/700 are all fair game — the old "only 400 and 700" rule is retired.
+- The ticker is still the **only persistent looping motion** on the page (60–90s loop, pause on hover, fully stops under `prefers-reduced-motion`) — that concept survived the redesign even though its visual style (now rounded chip cards, not hairline-divided text) changed. Short hover/entrance transitions (card lift, button hover) are now allowed elsewhere; just don't add another continuous/repeating loop animation outside the ticker.
 - Fake restaurant/review data should read as plausible real Seoul neighborhoods/cuisines (per PRD.md §5.2), not placeholder text like "맛집 A".
 
 ## Scope note
