@@ -266,6 +266,9 @@ img{ display:block; max-width:100%; }
   box-shadow:none;
   transform:none;
 }
+.search-results__more-btn[hidden]{
+  display:none;
+}
 
 /* ================= PAGE FOOTER ================= */
 .page-footer{
