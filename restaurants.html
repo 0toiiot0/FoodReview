@@ -7,6 +7,15 @@
   <link rel="stylesheet" href="restaurants.css" />
 </head>
 <body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__logo" href="index.html">자리있어</a>
+      <div class="auth-slot" id="authSlot">
+        <button class="btn-pill btn-pill-outline auth-login-btn" id="authLoginBtn" type="button">로그인</button>
+      </div>
+    </div>
+  </header>
+
   <header class="page-header">
     <a class="page-header__logo" href="index.html">자리있어</a>
     <h1 class="page-header__title">맛집 담기</h1>
@@ -44,11 +53,39 @@
 
   <div class="review-panel" id="reviewPanel" hidden aria-hidden="true"></div>
 
+  <div class="auth-modal" id="authModal" hidden aria-hidden="true">
+    <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <button class="auth-modal__close" id="authModalClose" type="button" aria-label="닫기">&times;</button>
+      <h2 class="auth-modal__title" id="authModalTitle">로그인</h2>
+      <p class="auth-modal__message" id="authModalMessage" hidden></p>
+      <form class="auth-modal__form" id="authForm">
+        <div class="auth-modal__field">
+          <label for="authName">이름</label>
+          <input type="text" id="authName" name="name" autocomplete="name" placeholder="회원가입 시 필요해요">
+        </div>
+        <div class="auth-modal__field">
+          <label for="authEmail">이메일</label>
+          <input type="email" id="authEmail" name="email" autocomplete="email" required>
+        </div>
+        <div class="auth-modal__field">
+          <label for="authPassword">비밀번호</label>
+          <input type="password" id="authPassword" name="password" autocomplete="current-password" required>
+        </div>
+        <div class="auth-modal__actions">
+          <button type="submit" class="btn-pill auth-modal__submit-login" id="authSubmitLogin">로그인</button>
+          <button type="button" class="btn-pill btn-pill-outline" id="authSubmitSignup">회원가입</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <footer class="page-footer">
     <p class="page-footer__text">&copy; 2026 자리있어. 이 페이지의 검색 결과는 카카오 로컬 API를 통해 제공됩니다.</p>
   </footer>
 
   <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/wordcloud@1/src/wordcloud2.js"></script>
   <script src="restaurants.js"></script>
 </body>

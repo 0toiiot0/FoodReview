@@ -16,6 +16,16 @@
   </symbol>
 </svg>
 
+<!-- ================= HEADER ================= -->
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="site-header__logo" href="index.html">자리있어</a>
+    <div class="auth-slot" id="authSlot">
+      <button class="btn-pill btn-pill-outline auth-login-btn" id="authLoginBtn" type="button">로그인</button>
+    </div>
+  </div>
+</header>
+
 <!-- ================= HERO ================= -->
 <section class="hero">
   <div class="wrap">
@@ -182,6 +192,36 @@
   </div>
 </footer>
 
+<!-- ================= AUTH MODAL ================= -->
+<div class="auth-modal" id="authModal" hidden aria-hidden="true">
+  <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <button class="auth-modal__close" id="authModalClose" type="button" aria-label="닫기">&times;</button>
+    <h2 class="auth-modal__title" id="authModalTitle">로그인</h2>
+    <p class="auth-modal__message" id="authModalMessage" hidden></p>
+    <form class="auth-modal__form" id="authForm">
+      <div class="auth-modal__field">
+        <label for="authName">이름</label>
+        <input type="text" id="authName" name="name" autocomplete="name" placeholder="회원가입 시 필요해요">
+      </div>
+      <div class="auth-modal__field">
+        <label for="authEmail">이메일</label>
+        <input type="email" id="authEmail" name="email" autocomplete="email" required>
+      </div>
+      <div class="auth-modal__field">
+        <label for="authPassword">비밀번호</label>
+        <input type="password" id="authPassword" name="password" autocomplete="current-password" required>
+      </div>
+      <div class="auth-modal__actions">
+        <button type="submit" class="btn-pill auth-modal__submit-login" id="authSubmitLogin">로그인</button>
+        <button type="button" class="btn-pill btn-pill-outline" id="authSubmitSignup">회원가입</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
 <script src="script.js"></script>
 
 </body>
