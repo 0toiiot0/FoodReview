@@ -709,9 +709,20 @@
       return;
     }
 
+    // wordcloud2.js는 라틴 폰트 기준으로 글자 높이를 추정하기 때문에, 한글(Pretendard)에서는
+    // 실제 렌더링 높이가 예상보다 커서 캔버스 경계에 글자가 잘리는 경우가 있다.
+    // 캔버스를 표시 영역보다 여유 있게 크게 그린 뒤, wrap의 overflow:hidden으로 바깥쪽만 잘라내
+    // 실제 보이는 영역 안에서는 글자가 잘리지 않도록 한다.
     const wrap = canvasEl.parentElement;
-    canvasEl.width = wrap.clientWidth;
-    canvasEl.height = wrap.clientHeight;
+    const PADDING = 24;
+    const width = wrap.clientWidth;
+    const height = wrap.clientHeight;
+    canvasEl.width = width + PADDING * 2;
+    canvasEl.height = height + PADDING * 2;
+    canvasEl.style.width = canvasEl.width + "px";
+    canvasEl.style.height = canvasEl.height + "px";
+    canvasEl.style.left = "-" + PADDING + "px";
+    canvasEl.style.top = "-" + PADDING + "px";
 
     const rootStyle = getComputedStyle(document.documentElement);
     const positiveColor = rootStyle.getPropertyValue("--positive").trim();
@@ -726,9 +737,9 @@
 
     function weightFactor(score) {
       if (maxScore === minScore) {
-        return 28;
+        return 24;
       }
-      return 16 + ((score - minScore) / (maxScore - minScore)) * 28;
+      return 14 + ((score - minScore) / (maxScore - minScore)) * 22;
     }
 
     const list = keywords.map(function (keyword) {
@@ -737,7 +748,7 @@
 
     window.WordCloud(canvasEl, {
       list: list,
-      gridSize: 8,
+      gridSize: 10,
       weightFactor: weightFactor,
       rotateRatio: 0,
       fontFamily: "Pretendard, sans-serif",
