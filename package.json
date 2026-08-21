@@ -1,6 +1,9 @@
 {
   "name": "food-review",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "build": "node generate-config.js"
   }

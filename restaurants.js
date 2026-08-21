@@ -20,11 +20,15 @@
   const statusEl = document.getElementById("resultStatus");
   const gridEl = document.getElementById("resultGrid");
   const moreButton = document.getElementById("moreButton");
+  const reviewPanel = document.getElementById("reviewPanel");
+
+  const REVIEW_CACHE_PREFIX = "reviewCache::";
 
   // 현재 검색 조건 상태 (새 검색 시작 시 초기화, "더 보기" 클릭 시 page만 증가)
   // { mode: "keyword" | "category", keyword, categoryCode, coords, page }
   let searchState = null;
   let loadedCount = 0;
+  let reviewContentEl = null;
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -34,6 +38,21 @@
   moreButton.addEventListener("click", function () {
     loadMore();
   });
+
+  gridEl.addEventListener("click", function (event) {
+    if (event.target.closest(".result-card__link")) {
+      return;
+    }
+    const card = event.target.closest(".result-card");
+    if (!card || !card.dataset.placeName) {
+      return;
+    }
+    openReviewPanel(card.dataset.placeName, card.dataset.lat, card.dataset.lng);
+  });
+
+  if (reviewPanel) {
+    reviewContentEl = initReviewPanel();
+  }
 
   function isApiKeyMissing() {
     return (
@@ -249,6 +268,9 @@
   function createResultCard(place) {
     const card = document.createElement("article");
     card.className = "result-card";
+    card.dataset.placeName = place.place_name || "";
+    card.dataset.lat = place.y || "";
+    card.dataset.lng = place.x || "";
 
     const name = document.createElement("h3");
     name.className = "result-card__name";
@@ -285,5 +307,225 @@
     }
 
     return card;
+  }
+
+  // ================= 구글 리뷰 패널 =================
+
+  function initReviewPanel() {
+    reviewPanel.hidden = true;
+    reviewPanel.setAttribute("aria-hidden", "true");
+
+    const dialog = document.createElement("div");
+    dialog.className = "review-panel__dialog";
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "review-panel__close";
+    closeButton.setAttribute("aria-label", "닫기");
+    closeButton.textContent = "×";
+    closeButton.addEventListener("click", closeReviewPanel);
+    dialog.appendChild(closeButton);
+
+    const content = document.createElement("div");
+    content.className = "review-panel__content";
+    dialog.appendChild(content);
+
+    reviewPanel.appendChild(dialog);
+
+    reviewPanel.addEventListener("click", function (event) {
+      if (event.target === reviewPanel) {
+        closeReviewPanel();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !reviewPanel.hidden) {
+        closeReviewPanel();
+      }
+    });
+
+    return content;
+  }
+
+  function openReviewPanel(name, lat, lng) {
+    if (!reviewContentEl) {
+      return;
+    }
+
+    reviewPanel.hidden = false;
+    reviewPanel.setAttribute("aria-hidden", "false");
+
+    const cacheKey = REVIEW_CACHE_PREFIX + name + "::" + lat + "::" + lng;
+    const cached = readReviewCache(cacheKey);
+    if (cached) {
+      renderReviewResult(cached, name);
+      return;
+    }
+
+    renderReviewLoading();
+
+    const url = new URL("/api/reviews", window.location.origin);
+    url.searchParams.set("name", name);
+    url.searchParams.set("lat", lat);
+    url.searchParams.set("lng", lng);
+
+    fetch(url.toString())
+      .then(function (response) {
+        if (!response.ok) {
+          const error = new Error("리뷰 요청이 실패했습니다.");
+          error.status = response.status;
+          throw error;
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        renderReviewResult(data, name);
+        writeReviewCache(cacheKey, data);
+      })
+      .catch(function (error) {
+        console.error("Google review fetch error:", error);
+        renderReviewError();
+      });
+  }
+
+  function closeReviewPanel() {
+    reviewPanel.hidden = true;
+    reviewPanel.setAttribute("aria-hidden", "true");
+  }
+
+  function clearReviewContent() {
+    while (reviewContentEl.firstChild) {
+      reviewContentEl.removeChild(reviewContentEl.firstChild);
+    }
+  }
+
+  function renderReviewLoading() {
+    clearReviewContent();
+    const loading = document.createElement("p");
+    loading.className = "review-panel__loading";
+    loading.textContent = "리뷰를 불러오는 중....";
+    reviewContentEl.appendChild(loading);
+  }
+
+  function renderReviewError() {
+    clearReviewContent();
+    const error = document.createElement("p");
+    error.className = "review-panel__error";
+    error.textContent = "리뷰를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
+    reviewContentEl.appendChild(error);
+  }
+
+  function renderReviewResult(data, name) {
+    if (!data || !data.found) {
+      renderReviewNotFound(name);
+      return;
+    }
+
+    clearReviewContent();
+
+    const title = document.createElement("h2");
+    title.className = "review-panel__name";
+    title.textContent = data.name || name;
+    reviewContentEl.appendChild(title);
+
+    const ratingRow = document.createElement("p");
+    ratingRow.className = "review-panel__rating";
+
+    if (typeof data.rating === "number") {
+      const stars = document.createElement("span");
+      stars.className = "review-panel__stars";
+      stars.textContent = starsFor(data.rating);
+      ratingRow.appendChild(stars);
+
+      const ratingNum = document.createElement("span");
+      ratingNum.textContent = " " + data.rating.toFixed(1);
+      ratingRow.appendChild(ratingNum);
+    }
+
+    const count = document.createElement("span");
+    count.className = "review-panel__count";
+    count.textContent = " (" + (data.userRatingCount || 0) + "개 리뷰)";
+    ratingRow.appendChild(count);
+
+    reviewContentEl.appendChild(ratingRow);
+
+    const list = document.createElement("ul");
+    list.className = "review-panel__list";
+
+    if (data.reviews && data.reviews.length > 0) {
+      data.reviews.forEach(function (review) {
+        list.appendChild(createReviewItem(review));
+      });
+    } else {
+      const empty = document.createElement("li");
+      empty.className = "review-panel__item";
+      empty.textContent = "아직 등록된 리뷰가 없습니다.";
+      list.appendChild(empty);
+    }
+
+    reviewContentEl.appendChild(list);
+
+    if (data.mapsUri) {
+      const link = document.createElement("a");
+      link.className = "review-panel__maps-link";
+      link.href = data.mapsUri;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "구글 맵에서 전체 리뷰 보기";
+      reviewContentEl.appendChild(link);
+    }
+  }
+
+  function createReviewItem(review) {
+    const item = document.createElement("li");
+    item.className = "review-panel__item";
+
+    const meta = document.createElement("p");
+    meta.className = "review-panel__item-meta";
+    meta.textContent =
+      (review.author || "익명") +
+      " · " +
+      starsFor(review.rating || 0) +
+      (review.relativeTime ? " · " + review.relativeTime : "");
+    item.appendChild(meta);
+
+    const text = document.createElement("p");
+    text.className = "review-panel__item-text";
+    text.textContent = review.text || "";
+    item.appendChild(text);
+
+    return item;
+  }
+
+  function renderReviewNotFound(name) {
+    clearReviewContent();
+    const empty = document.createElement("p");
+    empty.className = "review-panel__empty";
+    empty.textContent = '"' + name + '"의 구글 리뷰 정보를 찾을 수 없습니다.';
+    reviewContentEl.appendChild(empty);
+  }
+
+  function starsFor(rating) {
+    const count = Math.max(0, Math.min(5, Math.round(rating)));
+    return "⭐".repeat(count);
+  }
+
+  function readReviewCache(key) {
+    try {
+      const raw = window.localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeReviewCache(key, data) {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      // localStorage를 사용할 수 없는 환경(프라이빗 모드 등)에서는 캐시 없이 동작한다.
+    }
   }
 })();
