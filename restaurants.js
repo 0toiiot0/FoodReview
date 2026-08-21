@@ -23,12 +23,14 @@
   const reviewPanel = document.getElementById("reviewPanel");
 
   const REVIEW_CACHE_PREFIX = "reviewCache::";
+  const ANALYSIS_CACHE_PREFIX = "analysisCache::";
 
   // 현재 검색 조건 상태 (새 검색 시작 시 초기화, "더 보기" 클릭 시 page만 증가)
   // { mode: "keyword" | "category", keyword, categoryCode, coords, page }
   let searchState = null;
   let loadedCount = 0;
   let reviewContentEl = null;
+  let activeRequestId = 0;
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -354,13 +356,15 @@
       return;
     }
 
+    const requestId = ++activeRequestId;
+
     reviewPanel.hidden = false;
     reviewPanel.setAttribute("aria-hidden", "false");
 
     const cacheKey = REVIEW_CACHE_PREFIX + name + "::" + lat + "::" + lng;
-    const cached = readReviewCache(cacheKey);
+    const cached = readJSONCache(cacheKey);
     if (cached) {
-      renderReviewResult(cached, name);
+      renderReviewResult(cached, name, lat, lng, requestId);
       return;
     }
 
@@ -381,10 +385,16 @@
         return response.json();
       })
       .then(function (data) {
-        renderReviewResult(data, name);
-        writeReviewCache(cacheKey, data);
+        if (requestId !== activeRequestId) {
+          return;
+        }
+        renderReviewResult(data, name, lat, lng, requestId);
+        writeJSONCache(cacheKey, data);
       })
       .catch(function (error) {
+        if (requestId !== activeRequestId) {
+          return;
+        }
         console.error("Google review fetch error:", error);
         renderReviewError();
       });
@@ -417,7 +427,7 @@
     reviewContentEl.appendChild(error);
   }
 
-  function renderReviewResult(data, name) {
+  function renderReviewResult(data, name, lat, lng, requestId) {
     if (!data || !data.found) {
       renderReviewNotFound(name);
       return;
@@ -467,6 +477,11 @@
 
     reviewContentEl.appendChild(list);
 
+    const hasReviews = Array.isArray(data.reviews) && data.reviews.length > 0;
+    if (hasReviews) {
+      reviewContentEl.appendChild(buildAnalysisSection(data.reviews, name, lat, lng, requestId));
+    }
+
     if (data.mapsUri) {
       const link = document.createElement("a");
       link.className = "review-panel__maps-link";
@@ -512,7 +527,7 @@
     return "⭐".repeat(count);
   }
 
-  function readReviewCache(key) {
+  function readJSONCache(key) {
     try {
       const raw = window.localStorage.getItem(key);
       return raw ? JSON.parse(raw) : null;
@@ -521,11 +536,215 @@
     }
   }
 
-  function writeReviewCache(key, data) {
+  function writeJSONCache(key, data) {
     try {
       window.localStorage.setItem(key, JSON.stringify(data));
     } catch (error) {
       // localStorage를 사용할 수 없는 환경(프라이빗 모드 등)에서는 캐시 없이 동작한다.
     }
+  }
+
+  // ================= AI 리뷰 분석 =================
+
+  function buildAnalysisSection(reviews, name, lat, lng, requestId) {
+    const section = document.createElement("section");
+    section.className = "ai-analysis";
+
+    const title = document.createElement("h3");
+    title.className = "ai-analysis__title";
+    title.textContent = "AI 리뷰 분석";
+    section.appendChild(title);
+
+    const bodyEl = document.createElement("div");
+    bodyEl.className = "ai-analysis__body";
+    section.appendChild(bodyEl);
+
+    const analysisCacheKey = ANALYSIS_CACHE_PREFIX + name + "::" + lat + "::" + lng;
+    const cached = readJSONCache(analysisCacheKey);
+
+    if (cached) {
+      renderAnalysisResult(bodyEl, cached);
+      return section;
+    }
+
+    renderAnalysisLoading(bodyEl);
+
+    fetch("/api/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        reviews: reviews.map(function (review) {
+          return { text: review.text, rating: review.rating };
+        }),
+      }),
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          const error = new Error("AI 분석 요청이 실패했습니다.");
+          error.status = response.status;
+          throw error;
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        if (requestId !== activeRequestId) {
+          return;
+        }
+        renderAnalysisResult(bodyEl, data);
+        writeJSONCache(analysisCacheKey, data);
+      })
+      .catch(function (error) {
+        if (requestId !== activeRequestId) {
+          return;
+        }
+        console.error("AI analysis fetch error:", error);
+        renderAnalysisError(bodyEl);
+      });
+
+    return section;
+  }
+
+  function clearElement(el) {
+    while (el.firstChild) {
+      el.removeChild(el.firstChild);
+    }
+  }
+
+  function renderAnalysisLoading(bodyEl) {
+    clearElement(bodyEl);
+    const loading = document.createElement("p");
+    loading.className = "ai-analysis__loading";
+    loading.textContent = "AI가 리뷰를 분석하는 중....";
+    bodyEl.appendChild(loading);
+  }
+
+  function renderAnalysisError(bodyEl) {
+    clearElement(bodyEl);
+    const error = document.createElement("p");
+    error.className = "ai-analysis__error";
+    error.textContent = "AI 분석에 실패했습니다.";
+    bodyEl.appendChild(error);
+  }
+
+  function renderAnalysisResult(bodyEl, data) {
+    clearElement(bodyEl);
+
+    bodyEl.appendChild(buildSentimentBar(data.sentiment));
+
+    const wordCloudWrap = document.createElement("div");
+    wordCloudWrap.className = "ai-analysis__wordcloud-wrap";
+    const canvas = document.createElement("canvas");
+    wordCloudWrap.appendChild(canvas);
+    bodyEl.appendChild(wordCloudWrap);
+    drawWordCloud(canvas, data.keywords || []);
+
+    bodyEl.appendChild(buildSummaryBubble(data.summary));
+  }
+
+  function buildSentimentBar(sentiment) {
+    const wrap = document.createElement("div");
+
+    const positive = (sentiment && sentiment.positive) || 0;
+    const neutral = (sentiment && sentiment.neutral) || 0;
+    const negative = (sentiment && sentiment.negative) || 0;
+    const total = (sentiment && sentiment.total) || positive + neutral + negative || 1;
+
+    const bar = document.createElement("div");
+    bar.className = "ai-analysis__bar";
+
+    [
+      ["positive", positive, "긍정"],
+      ["neutral", neutral, "보통"],
+      ["negative", negative, "부정"],
+    ].forEach(function (entry) {
+      if (entry[1] <= 0) {
+        return;
+      }
+      const segment = document.createElement("span");
+      segment.className = "ai-analysis__bar-" + entry[0];
+      segment.style.width = (entry[1] / total) * 100 + "%";
+      bar.appendChild(segment);
+    });
+    wrap.appendChild(bar);
+
+    const legend = document.createElement("ul");
+    legend.className = "ai-analysis__legend";
+    [
+      ["positive", positive, "긍정"],
+      ["neutral", neutral, "보통"],
+      ["negative", negative, "부정"],
+    ].forEach(function (entry) {
+      const item = document.createElement("li");
+      const dot = document.createElement("span");
+      dot.className = "ai-analysis__legend-dot";
+      dot.style.background = "var(--" + entry[0] + ")";
+      item.appendChild(dot);
+      item.appendChild(document.createTextNode(entry[2] + " " + entry[1]));
+      legend.appendChild(item);
+    });
+    wrap.appendChild(legend);
+
+    return wrap;
+  }
+
+  function buildSummaryBubble(summary) {
+    const wrap = document.createElement("div");
+
+    const badge = document.createElement("span");
+    badge.className = "ai-analysis__ai-badge";
+    badge.textContent = "AI 요약";
+    wrap.appendChild(badge);
+
+    const bubble = document.createElement("p");
+    bubble.className = "ai-analysis__summary-bubble";
+    bubble.textContent = summary || "";
+    wrap.appendChild(bubble);
+
+    return wrap;
+  }
+
+  function drawWordCloud(canvasEl, keywords) {
+    if (typeof window.WordCloud !== "function" || !keywords.length) {
+      return;
+    }
+
+    const wrap = canvasEl.parentElement;
+    canvasEl.width = wrap.clientWidth;
+    canvasEl.height = wrap.clientHeight;
+
+    const rootStyle = getComputedStyle(document.documentElement);
+    const positiveColor = rootStyle.getPropertyValue("--positive").trim();
+    const negativeColor = rootStyle.getPropertyValue("--negative").trim();
+    const backgroundColor = rootStyle.getPropertyValue("--paper-deep").trim();
+
+    const scores = keywords.map(function (keyword) {
+      return keyword.score;
+    });
+    const minScore = Math.min.apply(null, scores);
+    const maxScore = Math.max.apply(null, scores);
+
+    function weightFactor(score) {
+      if (maxScore === minScore) {
+        return 28;
+      }
+      return 16 + ((score - minScore) / (maxScore - minScore)) * 28;
+    }
+
+    const list = keywords.map(function (keyword) {
+      return [keyword.word, keyword.score, keyword.sentiment];
+    });
+
+    window.WordCloud(canvasEl, {
+      list: list,
+      gridSize: 8,
+      weightFactor: weightFactor,
+      rotateRatio: 0,
+      fontFamily: "Pretendard, sans-serif",
+      backgroundColor: backgroundColor,
+      color: function (word, weight, fontSize, distance, theta, extra) {
+        return extra[2] === "negative" ? negativeColor : positiveColor;
+      },
+    });
   }
 })();

@@ -30,6 +30,12 @@
   --shadow-sm:0 2px 8px rgba(0,0,0,.08);
   --shadow-md:0 6px 16px rgba(0,0,0,.12);
   --shadow-lg:0 10px 30px rgba(0,0,0,.16);
+  --positive:#2E9B4F;
+  --positive-soft:#E8F5EA;
+  --neutral:#F5A623;
+  --neutral-soft:#FFF4E0;
+  --negative:#D93025;
+  --negative-soft:#FBE9E7;
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
@@ -371,6 +377,96 @@ img{ display:block; max-width:100%; }
   padding:12px 32px 12px 0;
 }
 
+/* ================= AI 리뷰 분석 (restaurants.js가 내용을 채움) ================= */
+.ai-analysis{
+  border-top:1px solid var(--rule);
+  margin:4px 0 20px;
+  padding-top:20px;
+}
+.ai-analysis__title{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+.ai-analysis__loading,
+.ai-analysis__error{
+  font-size:14px;
+  color:var(--ink-muted);
+}
+
+.ai-analysis__bar{
+  display:flex;
+  height:10px;
+  border-radius:var(--radius-pill);
+  overflow:hidden;
+  background:var(--paper-deep);
+  margin-bottom:10px;
+}
+.ai-analysis__bar-positive{ background:var(--positive); }
+.ai-analysis__bar-neutral{ background:var(--neutral); }
+.ai-analysis__bar-negative{ background:var(--negative); }
+
+.ai-analysis__legend{
+  list-style:none;
+  display:flex;
+  gap:16px;
+  font-size:12px;
+  color:var(--ink-muted);
+  margin-bottom:20px;
+}
+.ai-analysis__legend li{
+  display:flex;
+  align-items:center;
+}
+.ai-analysis__legend-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  margin-right:6px;
+}
+
+.ai-analysis__wordcloud-wrap{
+  background:var(--paper-deep);
+  border-radius:var(--radius-sm);
+  height:220px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+.ai-analysis__wordcloud-wrap canvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+.ai-analysis__ai-badge{
+  display:inline-block;
+  font-size:11px;
+  font-weight:600;
+  color:var(--accent-deep);
+  background:var(--accent-soft);
+  border-radius:var(--radius-pill);
+  padding:3px 10px;
+  margin-bottom:8px;
+}
+.ai-analysis__summary-bubble{
+  position:relative;
+  background:var(--paper-deep);
+  border-radius:var(--radius-md);
+  padding:14px 18px;
+  font-size:14px;
+  line-height:1.6;
+}
+.ai-analysis__summary-bubble::before{
+  content:"";
+  position:absolute;
+  top:-8px;
+  left:20px;
+  border-width:0 8px 8px;
+  border-style:solid;
+  border-color:transparent transparent var(--paper-deep) transparent;
+}
+
 /* ================= PAGE FOOTER ================= */
 .page-footer{
   background:var(--paper);
@@ -416,4 +512,7 @@ img{ display:block; max-width:100%; }
     max-height:85vh;
     border-radius:var(--radius-md) var(--radius-md) 0 0;
   }
+
+  .ai-analysis__wordcloud-wrap{ height:160px; }
+  .ai-analysis__legend{ flex-wrap:wrap; gap:10px 16px; }
 }
