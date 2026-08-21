@@ -1,31 +1,31 @@
 // 구글 리뷰 텍스트를 Gemini에 보내 감정 분류 / 핵심 키워드 / 한 줄 요약을 한 번에 받아온다.
-// 참고: https://ai.google.dev/api/generate-content
+// 참고: https://ai.google.dev/gemini-api/docs/structured-output (신규 /v1beta/interactions 엔드포인트)
 // GEMINI_API_KEY는 반드시 서버(이 함수) 안에서만 사용하고, 클라이언트로 절대 전달하지 않는다.
 
-const PRIMARY_MODEL = "gemini-2.5-flash-lite";
-const FALLBACK_MODEL = "gemini-2.0-flash";
-const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
+const PRIMARY_MODEL = "gemini-3.7-flash";
+const FALLBACK_MODEL = "gemini-3.6-flash";
+const GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
 
 const RESPONSE_SCHEMA = {
-  type: "OBJECT",
+  type: "object",
   properties: {
     sentiments: {
-      type: "ARRAY",
-      items: { type: "STRING", enum: ["positive", "neutral", "negative"] },
+      type: "array",
+      items: { type: "string", enum: ["positive", "neutral", "negative"] },
     },
     keywords: {
-      type: "ARRAY",
+      type: "array",
       items: {
-        type: "OBJECT",
+        type: "object",
         properties: {
-          word: { type: "STRING" },
-          score: { type: "INTEGER" },
-          sentiment: { type: "STRING", enum: ["positive", "negative"] },
+          word: { type: "string" },
+          score: { type: "integer" },
+          sentiment: { type: "string", enum: ["positive", "negative"] },
         },
         required: ["word", "score", "sentiment"],
       },
     },
-    summary: { type: "STRING" },
+    summary: { type: "string" },
   },
   required: ["sentiments", "keywords", "summary"],
 };
@@ -115,16 +115,19 @@ async function callGemini(apiKey, prompt) {
 }
 
 async function requestGemini(apiKey, model, prompt) {
-  const response = await fetch(GEMINI_API_BASE + model + ":generateContent?key=" + apiKey, {
+  const response = await fetch(GEMINI_INTERACTIONS_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        response_mime_type: "application/json",
-        response_schema: RESPONSE_SCHEMA,
-        temperature: 0.4,
-        maxOutputTokens: 1024,
+      model: model,
+      input: prompt,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: RESPONSE_SCHEMA,
       },
     }),
   });
@@ -136,8 +139,11 @@ async function requestGemini(apiKey, model, prompt) {
   }
 
   const data = await response.json();
-  const candidate = data.candidates && data.candidates[0];
-  const text = candidate && candidate.content && candidate.content.parts && candidate.content.parts[0] && candidate.content.parts[0].text;
+  const steps = Array.isArray(data.steps) ? data.steps : [];
+  const outputStep = steps.find(function (step) {
+    return step && step.type === "model_output";
+  });
+  const text = outputStep && outputStep.content && outputStep.content[0] && outputStep.content[0].text;
 
   if (!text) {
     throw new Error("Gemini API returned no content");
