@@ -306,6 +306,9 @@ img{ display:block; max-width:100%; }
   display:flex;
   flex-direction:column;
 }
+.bookmark-card[hidden]{
+  display:none;
+}
 .bookmark-card:hover{
   box-shadow:var(--shadow-lg);
   transform:translateY(-4px);
