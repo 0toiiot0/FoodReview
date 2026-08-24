@@ -54,6 +54,83 @@
     btn.setAttribute("aria-pressed", status === "visited" ? "true" : "false");
   }
 
+  function createNoteButton(note) {
+    const trimmed = (note || "").trim();
+    const noteBtn = document.createElement("button");
+    noteBtn.type = "button";
+    noteBtn.className = "bookmark-card__note-btn";
+    noteBtn.dataset.note = trimmed;
+    noteBtn.textContent = trimmed || "한 줄 평가 남기기";
+    noteBtn.classList.toggle("bookmark-card__note-btn--empty", !trimmed);
+    return noteBtn;
+  }
+
+  function renderNoteDisplay(noteWrap, note) {
+    noteWrap.innerHTML = "";
+    noteWrap.appendChild(createNoteButton(note));
+  }
+
+  function applyNoteVisibility(noteWrap, status, note) {
+    noteWrap.hidden = status !== "visited";
+    renderNoteDisplay(noteWrap, note);
+  }
+
+  function saveNote(card, noteWrap, value) {
+    const trimmed = value.trim();
+    supabaseClient
+      .from("bookmarks")
+      .update({ note: trimmed })
+      .eq("id", card.dataset.id)
+      .then(function (result) {
+        if (result.error) {
+          console.error("한 줄 평가 저장 실패:", result.error);
+          setStatus("한 줄 평가를 저장하지 못했습니다. 잠시 후 다시 시도해주세요.");
+        }
+        renderNoteDisplay(noteWrap, trimmed);
+      });
+  }
+
+  function openNoteEditor(card, noteWrap, autofocus) {
+    const currentBtn = noteWrap.querySelector(".bookmark-card__note-btn");
+    const currentNote = currentBtn ? currentBtn.dataset.note || "" : "";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "bookmark-card__note-input";
+    input.maxLength = 120;
+    input.placeholder = "한 줄 평가를 남겨보세요";
+    input.value = currentNote;
+
+    let settled = false;
+
+    function commit() {
+      if (settled) return;
+      settled = true;
+      saveNote(card, noteWrap, input.value);
+    }
+
+    function cancel() {
+      if (settled) return;
+      settled = true;
+      renderNoteDisplay(noteWrap, currentNote);
+    }
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commit();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        cancel();
+      }
+    });
+    input.addEventListener("blur", commit);
+
+    noteWrap.innerHTML = "";
+    noteWrap.appendChild(input);
+    if (autofocus) input.focus();
+  }
+
   function createBookmarkCard(row) {
     const card = document.createElement("article");
     card.className = "bookmark-card";
@@ -78,11 +155,18 @@
       card.appendChild(category);
     }
 
+    const status = row.status === "visited" ? "visited" : "planned";
+
     const statusBtn = document.createElement("button");
     statusBtn.type = "button";
     statusBtn.className = "bookmark-card__status-btn";
-    applyStatus(statusBtn, row.status === "visited" ? "visited" : "planned");
+    applyStatus(statusBtn, status);
     card.appendChild(statusBtn);
+
+    const noteWrap = document.createElement("div");
+    noteWrap.className = "bookmark-card__note-wrap";
+    applyNoteVisibility(noteWrap, status, row.note);
+    card.appendChild(noteWrap);
 
     const address = document.createElement("p");
     address.className = "bookmark-card__address";
@@ -161,6 +245,15 @@
         }
         applyStatus(btn, nextStatus);
         btn.disabled = false;
+
+        const noteWrap = card.querySelector(".bookmark-card__note-wrap");
+        if (!noteWrap) return;
+        const currentNoteBtn = noteWrap.querySelector(".bookmark-card__note-btn");
+        const currentNote = currentNoteBtn ? currentNoteBtn.dataset.note || "" : "";
+        applyNoteVisibility(noteWrap, nextStatus, currentNote);
+        if (nextStatus === "visited") {
+          openNoteEditor(card, noteWrap, true);
+        }
       });
   }
 
@@ -169,6 +262,14 @@
     if (statusBtn) {
       const card = statusBtn.closest(".bookmark-card");
       if (card) toggleVisitStatus(card, statusBtn);
+      return;
+    }
+
+    const noteBtn = event.target.closest(".bookmark-card__note-btn");
+    if (noteBtn) {
+      const noteWrap = noteBtn.closest(".bookmark-card__note-wrap");
+      const card = noteBtn.closest(".bookmark-card");
+      if (noteWrap && card) openNoteEditor(card, noteWrap, true);
       return;
     }
 

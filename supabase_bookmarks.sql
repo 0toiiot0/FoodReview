@@ -11,6 +11,7 @@ create table public.bookmarks (
   lng double precision not null, -- place.x
   created_at timestamptz not null default now(),
   status text not null default 'planned' check (status in ('planned', 'visited')), -- 맛집 주머니: 가볼 예정/다녀옴
+  note text,                     -- 다녀옴으로 바꿀 때 남기는 한 줄 평가 (본인만 조회, RLS로 보호됨)
   unique (user_id, place_id)     -- 같은 사람이 같은 가게 중복 담기 방지
 );
 
@@ -32,3 +33,6 @@ create policy "bookmarks_update_own"
 create policy "bookmarks_delete_own"
   on public.bookmarks for delete
   using (auth.uid() = user_id);
+
+-- 이미 위 create table을 실행해서 테이블이 있는 경우, 아래 한 줄만 추가로 실행하세요.
+-- alter table public.bookmarks add column note text;
