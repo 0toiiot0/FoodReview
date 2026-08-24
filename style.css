@@ -257,6 +257,157 @@ section{ padding:88px 0; }
   font-weight:700;
 }
 
+/* ================= POPULAR RANKING (ranking.js가 채움) ================= */
+.ranking-section{
+  background:var(--paper-deep);
+}
+.ranking-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.ranking-item{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  background:var(--paper);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-sm);
+  padding:18px 24px;
+  transition:box-shadow 200ms ease, transform 200ms ease;
+}
+.ranking-item:hover{
+  box-shadow:var(--shadow-md);
+  transform:translateY(-2px);
+}
+.ranking-rank{
+  flex-shrink:0;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  font-weight:700;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.ranking-item:nth-child(1) .ranking-rank{
+  background:var(--accent);
+  color:var(--ink-invert);
+}
+.ranking-info{
+  flex:1;
+  min-width:0;
+}
+.ranking-name{
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  margin-bottom:4px;
+}
+.ranking-meta{
+  font-size:13px;
+  color:var(--ink-muted);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.ranking-side{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-shrink:0;
+}
+.ranking-count{
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  font-weight:600;
+  font-size:12px;
+  border-radius:var(--radius-pill);
+  padding:6px 12px;
+  white-space:nowrap;
+}
+.ranking-map-link{
+  font-size:13px;
+  font-weight:600;
+  color:var(--accent-deep);
+  text-decoration:none;
+  white-space:nowrap;
+}
+.ranking-map-link:hover{ text-decoration:underline; }
+
+/* ================= PERSONALIZED RECOMMENDATION (recommend.js가 채움) ================= */
+.recommend-section{
+  background:var(--paper);
+}
+.recommend-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:24px;
+}
+.recommend-card{
+  background:var(--paper-deep);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-sm);
+  padding:20px;
+  overflow:hidden;
+  position:relative;
+  transition:box-shadow 200ms ease, transform 200ms ease;
+  display:flex;
+  flex-direction:column;
+}
+.recommend-card:hover{
+  box-shadow:var(--shadow-lg);
+  transform:translateY(-4px);
+}
+.recommend-card::before{
+  content:"\1F374";
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:calc(100% + 40px);
+  height:72px;
+  margin:-20px -20px 16px;
+  font-size:26px;
+  background:linear-gradient(135deg, var(--accent-wash) 0%, var(--accent-soft) 100%);
+}
+.recommend-card__name{
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  margin-bottom:8px;
+}
+.recommend-card__category{
+  display:inline-block;
+  align-self:flex-start;
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  border-radius:var(--radius-pill);
+  padding:6px 12px;
+  margin-bottom:10px;
+}
+.recommend-card__address{
+  font-size:14px;
+  color:var(--ink-muted);
+}
+.recommend-card__link{
+  display:inline-block;
+  align-self:flex-start;
+  margin-top:12px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--accent-deep);
+  text-decoration:none;
+}
+.recommend-card__link:hover{ text-decoration:underline; }
+
 /* ================= POPULAR RESTAURANTS ================= */
 .restaurants-section{
   background:var(--paper);
@@ -618,6 +769,7 @@ footer .copyright{
 @media (max-width:1279px){
   .card-grid{ grid-template-columns:repeat(2, 1fr); }
   .feature-list{ grid-template-columns:repeat(2, 1fr); }
+  .recommend-grid{ grid-template-columns:repeat(2, 1fr); }
 }
 
 /* Mobile (~767px) */
@@ -642,5 +794,16 @@ footer .copyright{
   .section-head h2{ font-size:22px; }
   .card-grid{ grid-template-columns:1fr; }
   .feature-list{ grid-template-columns:1fr; }
+  .recommend-grid{ grid-template-columns:1fr; }
+  .ranking-item{
+    flex-wrap:wrap;
+    gap:10px 16px;
+    padding:16px 18px;
+  }
+  .ranking-info{ min-width:60%; }
+  .ranking-side{
+    width:100%;
+    justify-content:space-between;
+  }
   footer .foot-top{ flex-direction:column; }
 }

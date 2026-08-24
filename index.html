@@ -39,6 +39,32 @@
   </div>
 </section>
 
+<!-- ================= POPULAR RANKING (실시간 담기 집계 TOP5) ================= -->
+<section class="ranking-section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">담기 데이터로 뽑은</span>
+        <h2>인기 랭킹 <span class="accent-word">TOP 5</span></h2>
+      </div>
+    </div>
+    <ol class="ranking-list reveal" id="rankingList"></ol>
+  </div>
+</section>
+
+<!-- ================= PERSONALIZED RECOMMENDATION (로그인 시에만) ================= -->
+<section class="recommend-section reveal" id="recommendSection" hidden>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">담은 취향을 분석해서</span>
+        <h2 id="recommendTitle">나를 위한 <span class="accent-word">추천</span></h2>
+      </div>
+    </div>
+    <div class="recommend-grid" id="recommendGrid"></div>
+  </div>
+</section>
+
 <!-- ================= POPULAR RESTAURANTS ================= -->
 <section class="restaurants-section">
   <div class="wrap">
@@ -223,6 +249,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js"></script>
 <script src="script.js"></script>
+<script src="ranking.js"></script>
+<script src="recommend.js"></script>
 
 </body>
 </html>
