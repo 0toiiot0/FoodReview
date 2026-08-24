@@ -29,7 +29,7 @@ A static one-page landing site for "자리있어" (a Korean food-review service 
 
 ## Scope note
 
-Per `PRD.md`, search, review submission, login, and real data are all intentionally non-functional in this version — the Hero search input is `readonly` and the CTA button has no handler. Don't wire these up unless explicitly asked; unimplemented features are meant to be visibly previewed via `COMING SOON` badges in the 서비스 특징 section, not built out.
+Per `PRD.md`, the Hero search input is `readonly` and the CTA button has no handler — that part is still intentionally non-functional. AI 리뷰 요약/감성 분석/워드클라우드(통계 대시보드) in the 서비스 특징 section are no longer `COMING SOON`: they now ship for real on `restaurants.html`'s "AI 리뷰 분석" panel (see `api/analyze.js`, `restaurants.js`), so as of 2026-08-24 each `feature-row` links there and shows a `NOW LIVE` badge instead.
 
 ## 반응형
 - 모바일 (375)

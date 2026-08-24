@@ -580,6 +580,9 @@ section{ padding:88px 0; }
   border:1px solid var(--rule);
   border-radius:var(--radius-md);
   transition:box-shadow 200ms ease, transform 200ms ease;
+  text-decoration:none;
+  color:inherit;
+  cursor:pointer;
 }
 .feature-row:hover{
   box-shadow:var(--shadow-md);
