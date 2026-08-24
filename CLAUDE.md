@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A static one-page landing site for "자리있어" (a Korean food-review service for people organizing group meetups). This is currently **landing-page-only** — no backend, no build tooling, no framework. The site is three files: `index.html`, `style.css`, `script.js`, served as plain static assets (open `index.html` directly or serve the directory with any static file server; there is no dev server, package.json, or build step in this repo).
+A static one-page landing site for "어디갈래" (a Korean food-review service for people organizing group meetups). This is currently **landing-page-only** — no backend, no build tooling, no framework. The site is three files: `index.html`, `style.css`, `script.js`, served as plain static assets (open `index.html` directly or serve the directory with any static file server; there is no dev server, package.json, or build step in this repo).
 
 `PRD.md` and `DESIGN.md` are the product/design specs this page was built from — read them before making content or visual changes, since they encode *why* choices were made, not just what they are.
 

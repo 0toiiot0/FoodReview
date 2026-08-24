@@ -1,4 +1,4 @@
-# DESIGN — 맛집 리뷰 서비스 (가칭)
+# DESIGN — 어디갈래
 
 > PRD.md 기반 / 대상 범위: 랜딩 페이지 + 맛집 검색 페이지(restaurants.html)
 > 작성일: 2026-08-14
@@ -158,7 +158,7 @@
 - **다크 블록에서 라이트 그레이(`--paper-deep`) 블록으로 변경.** 에어비앤비 푸터는 어두운 배경을 쓰지 않고, 옅은 회색 배경 + 다크 텍스트 + 상단 헤어라인으로 마감한다. 이전 버전의 "페이지를 어두운 면으로 닫는다" 컨셉은 폐기.
 - 만든 사람 / GitHub / MY HUB 링크 구성은 유지
 
-### 6.6 restaurants.html (신규, logic 팀원 소유 — 여기 CSS만 자리있어 팀이 작성)
+### 6.6 restaurants.html (신규, logic 팀원 소유 — 여기 CSS만 어디갈래 팀이 작성)
 
 - 검색바: Hero와 동일한 톤의 pill 결합형 (input + select + button)
 - 카테고리 필터: pill 토글 (선택 시 `--accent` 배경)
