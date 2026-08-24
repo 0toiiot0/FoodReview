@@ -1,20 +1,21 @@
 :root{
   --paper:#FFFFFF;
-  --paper-deep:#F7F7F7;
-  --ink:#222222;
-  --ink-muted:#5C5C5C;
-  --rule:#EBEBEB;
+  --paper-deep:#F4F4F4;
+  --surface-hover:#FFFFFF;
+  --ink:#1A1A1A;
+  --ink-muted:#6E6E6E;
+  --rule:#E4E4E4;
   --ink-invert:#FFFFFF;
-  --accent:#FF385C;
-  --accent-deep:#E31C5F;
-  --accent-soft:#FFE8EC;
-  --accent-wash:#FFF5F6;
+  --accent:#E60012;
+  --accent-deep:#B8000E;
+  --accent-soft:rgba(230,0,18,.12);
+  --accent-wash:rgba(230,0,18,.06);
   --radius-sm:8px;
-  --radius-md:12px;
+  --radius-md:14px;
   --radius-pill:999px;
-  --shadow-sm:0 2px 8px rgba(0,0,0,.08);
-  --shadow-md:0 6px 16px rgba(0,0,0,.12);
-  --shadow-lg:0 10px 30px rgba(0,0,0,.16);
+  --shadow-sm:3px 3px 0 rgba(0,0,0,.16);
+  --shadow-md:5px 5px 0 rgba(0,0,0,.2);
+  --shadow-lg:7px 7px 0 rgba(0,0,0,.24);
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
@@ -230,7 +231,7 @@ h1, h2, h3{
   width:520px;
   height:520px;
   border-radius:50%;
-  background:radial-gradient(circle at center, var(--accent-soft) 0%, rgba(255,232,236,0) 70%);
+  background:radial-gradient(circle at center, var(--accent-soft) 0%, rgba(230,0,18,0) 70%);
   pointer-events:none;
 }
 .hero .wrap{ position:relative; }
@@ -311,6 +312,7 @@ section{ padding:88px 0; }
   font-size:28px;
   font-weight:700;
 }
+.section-head .btn-pill{ padding:12px 24px; }
 
 /* ================= PERSONALIZED RECOMMENDATION (recommend.js가 채움) ================= */
 .recommend-section{
@@ -328,11 +330,12 @@ section{ padding:88px 0; }
   padding:20px;
   overflow:hidden;
   position:relative;
-  transition:box-shadow 200ms ease, transform 200ms ease;
+  transition:background 200ms ease, box-shadow 200ms ease, transform 200ms ease;
   display:flex;
   flex-direction:column;
 }
 .recommend-card:hover{
+  background:var(--surface-hover);
   box-shadow:var(--shadow-lg);
   transform:translateY(-4px);
 }
@@ -395,7 +398,7 @@ section{ padding:88px 0; }
   width:440px;
   height:440px;
   border-radius:50%;
-  background:radial-gradient(circle at center, var(--accent-wash) 0%, rgba(255,245,246,0) 70%);
+  background:radial-gradient(circle at center, var(--accent-wash) 0%, rgba(230,0,18,0) 70%);
   pointer-events:none;
 }
 .restaurants-section .wrap{ position:relative; }
@@ -410,10 +413,11 @@ section{ padding:88px 0; }
   border-radius:var(--radius-md);
   box-shadow:var(--shadow-sm);
   overflow:hidden;
-  transition:box-shadow 200ms ease, transform 200ms ease;
+  transition:background 200ms ease, box-shadow 200ms ease, transform 200ms ease;
   position:relative;
 }
 .card:hover{
+  background:var(--surface-hover);
   box-shadow:var(--shadow-lg);
   transform:translateY(-4px);
 }
@@ -421,10 +425,10 @@ section{ padding:88px 0; }
 .card-thumb{
   width:100%;
   aspect-ratio:4/3;
-  background:#EEECE8;
+  background:#F0EDE9;
   position:relative;
 }
-.card:hover .card-thumb{ background:#E7E4DE; }
+.card:hover .card-thumb{ background:#E9E4DC; }
 .card-thumb img{
   width:100%;
   height:100%;
@@ -531,7 +535,7 @@ section{ padding:88px 0; }
   gap:10px;
   white-space:nowrap;
   padding:16px 22px;
-  background:var(--paper);
+  background:var(--surface-hover);
   border-radius:var(--radius-pill);
   box-shadow:var(--shadow-sm);
 }
@@ -561,7 +565,7 @@ section{ padding:88px 0; }
   width:480px;
   height:480px;
   border-radius:50%;
-  background:radial-gradient(circle at center, var(--accent-soft) 0%, rgba(255,232,236,0) 70%);
+  background:radial-gradient(circle at center, var(--accent-soft) 0%, rgba(230,0,18,0) 70%);
   pointer-events:none;
 }
 .features .wrap{ position:relative; }
@@ -576,15 +580,16 @@ section{ padding:88px 0; }
   align-items:flex-start;
   gap:14px;
   padding:28px;
-  background:var(--paper);
+  background:var(--paper-deep);
   border:1px solid var(--rule);
   border-radius:var(--radius-md);
-  transition:box-shadow 200ms ease, transform 200ms ease;
+  transition:background 200ms ease, box-shadow 200ms ease, transform 200ms ease;
   text-decoration:none;
   color:inherit;
   cursor:pointer;
 }
 .feature-row:hover{
+  background:var(--surface-hover);
   box-shadow:var(--shadow-md);
   transform:translateY(-2px);
 }
@@ -664,7 +669,7 @@ footer .copyright{
 .auth-modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.4);
+  background:rgba(0,0,0,.5);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -737,6 +742,7 @@ footer .copyright{
   letter-spacing:0.04em;
 }
 .auth-modal__field input{
+  background:var(--paper-deep);
   border:1px solid var(--rule);
   border-radius:var(--radius-sm);
   font-family:'Pretendard', sans-serif;
