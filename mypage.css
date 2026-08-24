@@ -280,6 +280,25 @@ img{ display:block; max-width:100%; }
   border-color:var(--accent-deep);
 }
 
+.bookmark-filter__count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:18px;
+  height:18px;
+  padding:0 5px;
+  margin-left:4px;
+  border-radius:var(--radius-pill);
+  background:var(--paper-deep);
+  color:var(--ink-muted);
+  font-size:11px;
+  font-weight:700;
+}
+.bookmark-filter__btn.is-active .bookmark-filter__count{
+  background:rgba(255,255,255,.3);
+  color:var(--ink-invert);
+}
+
 .bookmark-filter-empty{
   font-size:14px;
   color:var(--ink-muted);

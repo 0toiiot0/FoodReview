@@ -197,6 +197,19 @@
     return card;
   }
 
+  function updateFilterCounts() {
+    if (!filterEl) return;
+    const cards = gridEl.querySelectorAll(".bookmark-card");
+    const counts = { all: cards.length, planned: 0, visited: 0 };
+    cards.forEach(function (card) {
+      if (card.dataset.status === "visited") counts.visited += 1;
+      else counts.planned += 1;
+    });
+    filterEl.querySelectorAll(".bookmark-filter__count").forEach(function (el) {
+      el.textContent = counts[el.dataset.count] || 0;
+    });
+  }
+
   function applyFilter() {
     const cards = gridEl.querySelectorAll(".bookmark-card");
     let visibleCount = 0;
@@ -206,6 +219,7 @@
       if (matches) visibleCount += 1;
     });
     filterEmptyEl.hidden = cards.length === 0 || visibleCount > 0;
+    updateFilterCounts();
   }
 
   function renderCards(rows) {
@@ -246,6 +260,7 @@
     if (!gridEl.children.length) {
       emptyEl.hidden = false;
     }
+    applyFilter();
   }
 
   function toggleVisitStatus(card, btn) {
