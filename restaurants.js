@@ -45,6 +45,9 @@
     if (event.target.closest(".result-card__link")) {
       return;
     }
+    if (event.target.closest(".result-card__save-btn")) {
+      return;
+    }
     const card = event.target.closest(".result-card");
     if (!card || !card.dataset.placeName) {
       return;
@@ -268,11 +271,25 @@
   }
 
   function createResultCard(place) {
+    const addressText = place.road_address_name || place.address_name || "";
+
     const card = document.createElement("article");
     card.className = "result-card";
+    card.dataset.placeId = place.id || "";
     card.dataset.placeName = place.place_name || "";
+    card.dataset.category = place.category_name || "";
+    card.dataset.address = addressText;
     card.dataset.lat = place.y || "";
     card.dataset.lng = place.x || "";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "result-card__save-btn";
+    saveBtn.setAttribute("aria-label", "담기");
+    saveBtn.setAttribute("aria-pressed", "false");
+    saveBtn.innerHTML =
+      '<svg viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.2L5 21V4a1 1 0 0 1 1-1z"/></svg>';
+    card.appendChild(saveBtn);
 
     const name = document.createElement("h3");
     name.className = "result-card__name";
@@ -288,7 +305,7 @@
 
     const address = document.createElement("p");
     address.className = "result-card__address";
-    address.textContent = place.road_address_name || place.address_name || "주소 정보 없음";
+    address.textContent = addressText || "주소 정보 없음";
     card.appendChild(address);
 
     if (place.phone) {

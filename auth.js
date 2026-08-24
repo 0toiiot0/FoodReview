@@ -194,6 +194,9 @@
   });
 
   window.Auth = {
+    getClient: function () {
+      return supabaseClient;
+    },
     getUser: function () {
       return supabaseClient.auth.getSession().then(function (result) {
         return result.data.session ? result.data.session.user : null;

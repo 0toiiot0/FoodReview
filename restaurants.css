@@ -372,6 +372,53 @@ img{ display:block; max-width:100%; }
   background:linear-gradient(135deg, var(--accent-wash) 0%, var(--accent-soft) 100%);
 }
 
+.result-card__save-btn{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:1;
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:50%;
+  background:rgba(255,255,255,.9);
+  box-shadow:var(--shadow-sm);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.result-card__save-btn svg{
+  width:16px;
+  height:16px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+}
+.result-card__save-btn:hover{
+  background:var(--accent-soft);
+  color:var(--accent-deep);
+  transform:translateY(-1px);
+}
+.result-card__save-btn.is-bookmarked{
+  background:var(--accent);
+  color:var(--ink-invert);
+}
+.result-card__save-btn.is-bookmarked svg{
+  fill:currentColor;
+}
+.result-card__save-btn.is-bookmarked:hover{
+  background:var(--accent-deep);
+  color:var(--ink-invert);
+}
+.result-card__save-btn:disabled{
+  opacity:.6;
+  cursor:default;
+  transform:none;
+}
+
 .result-card__name{
   font-size:18px;
   font-weight:700;
@@ -650,6 +697,29 @@ img{ display:block; max-width:100%; }
 /* Tablet (768px ~ 1279px) */
 @media (max-width:1279px){
   .result-grid{ grid-template-columns:repeat(2, 1fr); }
+}
+
+/* ---- bookmark toast (bookmarks.js) ---- */
+.bookmark-toast{
+  position:fixed;
+  left:50%;
+  bottom:32px;
+  transform:translate(-50%, 12px);
+  background:var(--ink);
+  color:var(--ink-invert);
+  font-size:14px;
+  font-weight:600;
+  padding:12px 20px;
+  border-radius:var(--radius-pill);
+  box-shadow:var(--shadow-md);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 200ms ease, transform 200ms ease;
+  z-index:200;
+}
+.bookmark-toast.is-visible{
+  opacity:1;
+  transform:translate(-50%, 0);
 }
 
 /* Mobile (~767px) */
