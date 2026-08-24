@@ -142,6 +142,7 @@
     if (!authSlot) return;
     if (user) {
       authSlot.innerHTML =
+        '<a class="btn-pill btn-pill-outline auth-bookmark-btn" href="mypage.html">맛집 주머니</a>' +
         '<span class="auth-user">' + escapeHtml(getDisplayName(user)) + '님</span>' +
         '<button class="btn-pill btn-pill-outline auth-logout-btn" id="authLogoutBtn" type="button">로그아웃</button>';
     } else {
