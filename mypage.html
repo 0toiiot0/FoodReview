@@ -29,7 +29,15 @@
 
     <p class="bookmark-status" id="bookmarkStatus" aria-live="polite"></p>
 
+    <div class="bookmark-filter" id="bookmarkFilter" role="group" aria-label="상태별 보기">
+      <button type="button" class="bookmark-filter__btn is-active" data-filter="all">전체</button>
+      <button type="button" class="bookmark-filter__btn" data-filter="planned">가볼 예정</button>
+      <button type="button" class="bookmark-filter__btn" data-filter="visited">다녀옴</button>
+    </div>
+
     <div class="bookmark-grid" id="bookmarkGrid"></div>
+
+    <p class="bookmark-filter-empty" id="bookmarkFilterEmpty" hidden>선택한 상태의 맛집이 없어요.</p>
 
     <div class="bookmark-empty" id="bookmarkEmpty" hidden>
       <p class="bookmark-empty__text">아직 담은 맛집이 없어요.. 검색하러 가볼까요?</p>

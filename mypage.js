@@ -12,8 +12,12 @@
   const statusEl = document.getElementById("bookmarkStatus");
   const gridEl = document.getElementById("bookmarkGrid");
   const emptyEl = document.getElementById("bookmarkEmpty");
+  const filterEl = document.getElementById("bookmarkFilter");
+  const filterEmptyEl = document.getElementById("bookmarkFilterEmpty");
 
   if (!gridEl) return;
+
+  let currentFilter = "all";
 
   function setStatus(message) {
     statusEl.textContent = message || "";
@@ -22,7 +26,9 @@
   function showLoginPrompt() {
     loginPromptEl.hidden = false;
     statusEl.hidden = true;
+    filterEl.hidden = true;
     gridEl.hidden = true;
+    filterEmptyEl.hidden = true;
     emptyEl.hidden = true;
     gridEl.innerHTML = "";
   }
@@ -30,6 +36,7 @@
   function showLoggedInView() {
     loginPromptEl.hidden = true;
     statusEl.hidden = false;
+    filterEl.hidden = false;
     gridEl.hidden = false;
   }
 
@@ -156,6 +163,7 @@
     }
 
     const status = row.status === "visited" ? "visited" : "planned";
+    card.dataset.status = status;
 
     const statusBtn = document.createElement("button");
     statusBtn.type = "button";
@@ -189,10 +197,22 @@
     return card;
   }
 
+  function applyFilter() {
+    const cards = gridEl.querySelectorAll(".bookmark-card");
+    let visibleCount = 0;
+    cards.forEach(function (card) {
+      const matches = currentFilter === "all" || card.dataset.status === currentFilter;
+      card.hidden = !matches;
+      if (matches) visibleCount += 1;
+    });
+    filterEmptyEl.hidden = cards.length === 0 || visibleCount > 0;
+  }
+
   function renderCards(rows) {
     gridEl.innerHTML = "";
     if (!rows || rows.length === 0) {
       emptyEl.hidden = false;
+      filterEmptyEl.hidden = true;
       return;
     }
     emptyEl.hidden = true;
@@ -201,6 +221,7 @@
       fragment.appendChild(createBookmarkCard(row));
     });
     gridEl.appendChild(fragment);
+    applyFilter();
   }
 
   function loadBookmarks() {
@@ -245,6 +266,8 @@
         }
         applyStatus(btn, nextStatus);
         btn.disabled = false;
+        card.dataset.status = nextStatus;
+        applyFilter();
 
         const noteWrap = card.querySelector(".bookmark-card__note-wrap");
         if (!noteWrap) return;
@@ -295,6 +318,19 @@
         removeCard(card);
       });
   });
+
+  if (filterEl) {
+    filterEl.addEventListener("click", function (event) {
+      const btn = event.target.closest(".bookmark-filter__btn");
+      if (!btn) return;
+
+      currentFilter = btn.dataset.filter;
+      filterEl.querySelectorAll(".bookmark-filter__btn").forEach(function (b) {
+        b.classList.toggle("is-active", b === btn);
+      });
+      applyFilter();
+    });
+  }
 
   if (loginBtn) {
     loginBtn.addEventListener("click", function () {

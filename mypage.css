@@ -248,6 +248,46 @@ img{ display:block; max-width:100%; }
   min-height:1.4em;
 }
 
+/* ================= BOOKMARK FILTER ================= */
+.bookmark-filter{
+  display:flex;
+  gap:8px;
+  margin-bottom:20px;
+}
+.bookmark-filter__btn{
+  border:1px solid var(--rule);
+  background:var(--paper);
+  color:var(--ink-muted);
+  font-family:'Pretendard', sans-serif;
+  font-weight:600;
+  font-size:13px;
+  border-radius:var(--radius-pill);
+  padding:8px 16px;
+  cursor:pointer;
+  transition:background 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.bookmark-filter__btn:hover{
+  border-color:var(--accent);
+  color:var(--accent-deep);
+}
+.bookmark-filter__btn.is-active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--ink-invert);
+}
+.bookmark-filter__btn.is-active:hover{
+  background:var(--accent-deep);
+  border-color:var(--accent-deep);
+}
+
+.bookmark-filter-empty{
+  font-size:14px;
+  color:var(--ink-muted);
+  text-align:center;
+  padding:48px 32px;
+}
+.bookmark-filter-empty[hidden]{ display:none; }
+
 /* ================= BOOKMARK GRID / CARD ================= */
 .bookmark-grid{
   display:grid;
