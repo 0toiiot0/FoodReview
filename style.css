@@ -478,7 +478,8 @@ section{ padding:88px 0; }
   pointer-events:none;
   transition:opacity 200ms ease;
 }
-.card:hover .card-thumb-overlay{ opacity:1; }
+.card:hover .card-thumb-overlay,
+.recommend-card:hover .card-thumb-overlay{ opacity:1; }
 .card-thumb-overlay__rating{
   display:flex;
   align-items:center;

@@ -103,6 +103,22 @@
       card.appendChild(link);
     }
 
+    const overlay = document.createElement("div");
+    overlay.className = "card-thumb-overlay";
+
+    const ratingRow = document.createElement("p");
+    ratingRow.className = "card-thumb-overlay__rating";
+    ratingRow.innerHTML = '<svg class="card-thumb-overlay__star" aria-hidden="true"><use href="#star-shape"></use></svg>';
+    ratingRow.appendChild(document.createTextNode(window.RestaurantInsights.ratingFor(place.place_name).toFixed(1)));
+    overlay.appendChild(ratingRow);
+
+    const summary = document.createElement("p");
+    summary.className = "card-thumb-overlay__summary";
+    summary.textContent = window.RestaurantInsights.summaryFor(place.place_name, place.category_name);
+    overlay.appendChild(summary);
+
+    card.appendChild(overlay);
+
     return card;
   }
 
