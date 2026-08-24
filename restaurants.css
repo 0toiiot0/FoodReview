@@ -349,6 +349,10 @@ img{ display:block; max-width:100%; }
   box-shadow:var(--shadow-lg);
   transform:translateY(-4px);
 }
+.result-card:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
 
 /* Kakao API has no photo field — a decorative header strip stands in for a
    thumbnail so cards don't read as empty text blocks (mirrors .card-thumb

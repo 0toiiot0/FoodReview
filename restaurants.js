@@ -41,6 +41,13 @@
     loadMore();
   });
 
+  function activateCard(card) {
+    if (!card || !card.dataset.placeName) {
+      return;
+    }
+    openReviewPanel(card.dataset.placeName, card.dataset.lat, card.dataset.lng);
+  }
+
   gridEl.addEventListener("click", function (event) {
     if (event.target.closest(".result-card__link")) {
       return;
@@ -48,11 +55,20 @@
     if (event.target.closest(".result-card__save-btn")) {
       return;
     }
-    const card = event.target.closest(".result-card");
-    if (!card || !card.dataset.placeName) {
+    activateCard(event.target.closest(".result-card"));
+  });
+
+  gridEl.addEventListener("keydown", function (event) {
+    if (event.key !== "Enter" && event.key !== " ") {
       return;
     }
-    openReviewPanel(card.dataset.placeName, card.dataset.lat, card.dataset.lng);
+    // 카드 자체가 포커스된 상태에서만 반응한다 (내부 링크/버튼은 자체 키보드 동작을 가지므로 제외).
+    const card = event.target.closest(".result-card");
+    if (!card || event.target !== card) {
+      return;
+    }
+    event.preventDefault();
+    activateCard(card);
   });
 
   if (reviewPanel) {
@@ -281,6 +297,9 @@
     card.dataset.address = addressText;
     card.dataset.lat = place.y || "";
     card.dataset.lng = place.x || "";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", (place.place_name || "이름 없음") + " 리뷰 보기");
 
     const saveBtn = document.createElement("button");
     saveBtn.type = "button";
