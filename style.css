@@ -223,6 +223,9 @@ h1, h2, h3{
   font-weight:400;
 }
 .cta-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   background:var(--accent);
   color:var(--ink-invert);
   border:none;
@@ -232,6 +235,7 @@ h1, h2, h3{
   font-size:15px;
   padding:0 28px;
   white-space:nowrap;
+  text-decoration:none;
   cursor:pointer;
   transition:background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
   box-shadow:var(--shadow-sm);
