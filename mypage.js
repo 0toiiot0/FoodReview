@@ -43,6 +43,17 @@
     return date.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
   }
 
+  function statusLabel(status) {
+    return status === "visited" ? "다녀옴" : "가볼 예정";
+  }
+
+  function applyStatus(btn, status) {
+    btn.dataset.status = status;
+    btn.textContent = statusLabel(status);
+    btn.classList.toggle("is-visited", status === "visited");
+    btn.setAttribute("aria-pressed", status === "visited" ? "true" : "false");
+  }
+
   function createBookmarkCard(row) {
     const card = document.createElement("article");
     card.className = "bookmark-card";
@@ -66,6 +77,12 @@
       category.textContent = row.category;
       card.appendChild(category);
     }
+
+    const statusBtn = document.createElement("button");
+    statusBtn.type = "button";
+    statusBtn.className = "bookmark-card__status-btn";
+    applyStatus(statusBtn, row.status === "visited" ? "visited" : "planned");
+    card.appendChild(statusBtn);
 
     const address = document.createElement("p");
     address.className = "bookmark-card__address";
@@ -126,14 +143,42 @@
     }
   }
 
-  gridEl.addEventListener("click", function (event) {
-    const btn = event.target.closest(".bookmark-card__delete-btn");
-    if (!btn) return;
-
-    const card = btn.closest(".bookmark-card");
-    if (!card) return;
+  function toggleVisitStatus(card, btn) {
+    const nextStatus = btn.dataset.status === "visited" ? "planned" : "visited";
 
     btn.disabled = true;
+
+    supabaseClient
+      .from("bookmarks")
+      .update({ status: nextStatus })
+      .eq("id", card.dataset.id)
+      .then(function (result) {
+        if (result.error) {
+          console.error("상태 변경 실패:", result.error);
+          setStatus("상태를 변경하지 못했습니다. 잠시 후 다시 시도해주세요.");
+          btn.disabled = false;
+          return;
+        }
+        applyStatus(btn, nextStatus);
+        btn.disabled = false;
+      });
+  }
+
+  gridEl.addEventListener("click", function (event) {
+    const statusBtn = event.target.closest(".bookmark-card__status-btn");
+    if (statusBtn) {
+      const card = statusBtn.closest(".bookmark-card");
+      if (card) toggleVisitStatus(card, statusBtn);
+      return;
+    }
+
+    const deleteBtn = event.target.closest(".bookmark-card__delete-btn");
+    if (!deleteBtn) return;
+
+    const card = deleteBtn.closest(".bookmark-card");
+    if (!card) return;
+
+    deleteBtn.disabled = true;
 
     supabaseClient
       .from("bookmarks")
@@ -143,7 +188,7 @@
         if (result.error) {
           console.error("삭제 실패:", result.error);
           setStatus("삭제하지 못했습니다. 잠시 후 다시 시도해주세요.");
-          btn.disabled = false;
+          deleteBtn.disabled = false;
           return;
         }
         removeCard(card);

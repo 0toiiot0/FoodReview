@@ -10,6 +10,7 @@ create table public.bookmarks (
   lat double precision not null, -- place.y
   lng double precision not null, -- place.x
   created_at timestamptz not null default now(),
+  status text not null default 'planned' check (status in ('planned', 'visited')), -- 맛집 주머니: 가볼 예정/다녀옴
   unique (user_id, place_id)     -- 같은 사람이 같은 가게 중복 담기 방지
 );
 
@@ -21,6 +22,11 @@ create policy "bookmarks_select_own"
 
 create policy "bookmarks_insert_own"
   on public.bookmarks for insert
+  with check (auth.uid() = user_id);
+
+create policy "bookmarks_update_own"
+  on public.bookmarks for update
+  using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 create policy "bookmarks_delete_own"
