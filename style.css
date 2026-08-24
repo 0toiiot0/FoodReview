@@ -2,7 +2,7 @@
   --paper:#FFFFFF;
   --paper-deep:#F7F7F7;
   --ink:#222222;
-  --ink-muted:#717171;
+  --ink-muted:#5C5C5C;
   --rule:#EBEBEB;
   --ink-invert:#FFFFFF;
   --accent:#FF385C;
@@ -165,6 +165,56 @@ h1, h2, h3{
   color:var(--ink);
 }
 
+/* ================= SUB NAV ================= */
+.site-subnav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:var(--paper);
+  border-bottom:1px solid var(--rule);
+}
+.site-subnav__inner{
+  max-width:1120px;
+  margin:0 auto;
+  display:flex;
+  gap:8px;
+  padding:12px 32px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.site-subnav__inner::-webkit-scrollbar{ display:none; }
+.subnav-pill{
+  flex-shrink:0;
+  display:inline-flex;
+  align-items:center;
+  height:40px;
+  padding:0 16px;
+  border-radius:var(--radius-pill);
+  font-family:'Pretendard', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  color:var(--ink);
+  text-decoration:none;
+  border:1px solid var(--rule);
+  background:var(--paper);
+  white-space:nowrap;
+  transition:background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+.subnav-pill:hover{
+  border-color:var(--accent);
+  color:var(--accent-deep);
+}
+.subnav-pill.is-active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--ink-invert);
+}
+
+/* anchor targets should clear the sticky sub nav */
+#restaurants, #reviews, #features{
+  scroll-margin-top:72px;
+}
+
 /* ================= HERO ================= */
 .hero{
   padding:120px 0 96px;
@@ -192,6 +242,7 @@ h1, h2, h3{
 }
 .hero p.lead{
   font-size:17px;
+  line-height:1.65;
   color:var(--ink-muted);
   max-width:46ch;
   margin-bottom:40px;
@@ -725,11 +776,14 @@ footer .copyright{
 @media (max-width:767px){
   .wrap{ padding:0 20px; }
   .site-header__inner{ padding:16px 20px; }
-  .auth-slot .btn-pill{ padding:9px 16px; font-size:13px; }
+  .auth-slot .btn-pill{ padding:11px 18px; font-size:14px; }
   .auth-user{ font-size:13px; }
   .auth-modal__dialog{ padding:28px 20px 20px; }
+  .site-subnav__inner{ padding:10px 20px; gap:6px; }
+  .subnav-pill{ height:38px; padding:0 14px; font-size:13px; }
   .hero{ padding:80px 0 64px; }
   .hero h1{ font-size:32px; }
+  .hero p.lead{ max-width:32ch; }
   .hero-search{
     flex-direction:column;
     border-radius:var(--radius-md);
@@ -744,5 +798,7 @@ footer .copyright{
   .card-grid{ grid-template-columns:1fr; }
   .feature-list{ grid-template-columns:1fr; }
   .recommend-grid{ grid-template-columns:1fr; }
+  .card-tag{ margin-bottom:10px; }
+  .card h3{ margin-bottom:6px; }
   footer .foot-top{ flex-direction:column; }
 }

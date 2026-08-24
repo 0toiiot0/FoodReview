@@ -48,3 +48,23 @@ if (prefersReducedMotion) {
 } else {
   revealEls.forEach(el => el.classList.add('is-visible'));
 }
+
+// ---- sub nav active state (scroll-spy) ----
+const subnavLinks = document.querySelectorAll('.site-subnav a[href^="#"]');
+const subnavTargets = Array.from(subnavLinks)
+  .map(link => document.querySelector(link.getAttribute('href')))
+  .filter(Boolean);
+
+if (subnavLinks.length && subnavTargets.length && 'IntersectionObserver' in window) {
+  const subnavObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const link = document.querySelector('.site-subnav a[href="#' + entry.target.id + '"]');
+      if (!link) return;
+      subnavLinks.forEach(l => l.classList.remove('is-active'));
+      link.classList.add('is-active');
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -50% 0px' });
+
+  subnavTargets.forEach(t => subnavObserver.observe(t));
+}

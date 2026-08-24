@@ -26,6 +26,17 @@
   </div>
 </header>
 
+<!-- ================= SUB NAV (주요 기능 바로가기) ================= -->
+<nav class="site-subnav" aria-label="주요 기능 바로가기">
+  <div class="site-subnav__inner">
+    <a href="#restaurants" class="subnav-pill">인기맛집</a>
+    <a href="#reviews" class="subnav-pill">최근후기</a>
+    <a href="#features" class="subnav-pill">서비스특징</a>
+    <a href="restaurants.html" class="subnav-pill">맛집찾기</a>
+    <a href="mypage.html" class="subnav-pill">MY</a>
+  </div>
+</nav>
+
 <!-- ================= HERO ================= -->
 <section class="hero">
   <div class="wrap">
@@ -53,7 +64,7 @@
 </section>
 
 <!-- ================= POPULAR RESTAURANTS (담기 집계 실데이터, 부족분은 큐레이션으로 보충 — popular-restaurants.js가 채움) ================= -->
-<section class="restaurants-section">
+<section class="restaurants-section" id="restaurants">
   <div class="wrap">
     <div class="section-head reveal">
       <div>
@@ -67,7 +78,7 @@
 </section>
 
 <!-- ================= RECENT REVIEWS TICKER ================= -->
-<section class="ticker-section">
+<section class="ticker-section" id="reviews">
   <div class="ticker-frame">
     <div class="ticker-track" id="tickerTrack">
       <!-- items injected/duplicated by script for seamless loop -->
@@ -76,7 +87,7 @@
 </section>
 
 <!-- ================= SERVICE FEATURES ================= -->
-<section class="features">
+<section class="features" id="features">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow">앞으로 만나게 될 기능</span>
