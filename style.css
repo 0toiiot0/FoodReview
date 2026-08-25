@@ -449,6 +449,26 @@ section{ padding:88px 0; }
 .card:hover .card-thumb--icon{ background:linear-gradient(135deg, var(--accent-wash) 0%, var(--accent-soft) 100%); }
 .card-thumb-emoji{ font-size:40px; line-height:1; }
 
+.card-thumb--photo img{
+  opacity:0;
+  transition:opacity 240ms ease;
+}
+.card-thumb--photo img.is-loaded{ opacity:1; }
+
+.card-thumb-attribution{
+  position:absolute;
+  right:8px;
+  bottom:8px;
+  padding:2px 8px;
+  border-radius:var(--radius-pill);
+  background:rgba(26,26,26,.55);
+  color:var(--ink-invert);
+  font-size:10px;
+  font-weight:600;
+  line-height:1.6;
+  pointer-events:none;
+}
+
 .card-rank-badge{
   position:absolute;
   top:12px;

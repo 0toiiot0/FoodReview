@@ -3,11 +3,9 @@
 //       https://developers.google.com/maps/documentation/places/web-service/place-details
 // GOOGLE_PLACES_API_KEY는 반드시 서버(이 함수) 안에서만 사용하고, 클라이언트로 절대 전달하지 않는다.
 
-const TEXT_SEARCH_URL = "https://places.googleapis.com/v1/places:searchText";
-const PLACE_DETAILS_URL = "https://places.googleapis.com/v1/places/";
+const { findNearbyPlace } = require("./_lib/places");
 
-const LOCATION_BIAS_RADIUS = 500; // meters — Text Search 후보를 넉넉히 받기 위한 가중치일 뿐, 강제 필터가 아님
-const MATCH_RADIUS_METERS = 150; // 도보 2분 거리 — 서버에서 직접 계산해 엄격히 적용하는 실제 필터
+const PLACE_DETAILS_URL = "https://places.googleapis.com/v1/places/";
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
@@ -31,61 +29,20 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const placeId = await findNearbyPlaceId(apiKey, name, lat, lng);
+    const place = await findNearbyPlace(apiKey, name, lat, lng, "places.id,places.displayName,places.location");
 
-    if (!placeId) {
+    if (!place) {
       res.status(200).json({ found: false });
       return;
     }
 
-    const details = await fetchPlaceDetails(apiKey, placeId);
+    const details = await fetchPlaceDetails(apiKey, place.id);
     res.status(200).json(details);
   } catch (error) {
     console.error("Google Places API error:", error);
     res.status(502).json({ error: "upstream_error", message: "구글 리뷰 정보를 가져오지 못했습니다." });
   }
 };
-
-async function findNearbyPlaceId(apiKey, name, lat, lng) {
-  const response = await fetch(TEXT_SEARCH_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Goog-Api-Key": apiKey,
-      "X-Goog-FieldMask": "places.id,places.displayName,places.location",
-    },
-    body: JSON.stringify({
-      textQuery: name,
-      languageCode: "ko",
-      maxResultCount: 10,
-      locationBias: {
-        circle: {
-          center: { latitude: lat, longitude: lng },
-          radius: LOCATION_BIAS_RADIUS,
-        },
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    const error = new Error("Text Search request failed with status " + response.status);
-    error.status = response.status;
-    throw error;
-  }
-
-  const data = await response.json();
-  const places = Array.isArray(data.places) ? data.places : [];
-
-  for (const place of places) {
-    if (!place.location) continue;
-    const distance = haversineDistance(lat, lng, place.location.latitude, place.location.longitude);
-    if (distance <= MATCH_RADIUS_METERS) {
-      return place.id;
-    }
-  }
-
-  return null;
-}
 
 async function fetchPlaceDetails(apiKey, placeId) {
   const response = await fetch(PLACE_DETAILS_URL + encodeURIComponent(placeId) + "?languageCode=ko", {
@@ -122,18 +79,4 @@ async function fetchPlaceDetails(apiKey, placeId) {
     reviews: reviews,
     mapsUri: data.googleMapsUri || "",
   };
-}
-
-function haversineDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371000; // meters
-  const toRad = function (deg) {
-    return (deg * Math.PI) / 180;
-  };
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
 }
