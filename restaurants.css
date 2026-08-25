@@ -86,7 +86,10 @@ img{ display:block; max-width:100%; }
 .auth-user{
   font-size:14px;
   font-weight:600;
-  color:var(--ink);
+  color:var(--ink-invert);
+  background:var(--accent);
+  padding:6px 14px;
+  border-radius:var(--radius-pill);
 }
 
 /* ---------- pill buttons (index.html의 style.css와 동일한 패턴) ---------- */

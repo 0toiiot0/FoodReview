@@ -163,7 +163,10 @@ h1, h2, h3{
 .auth-user{
   font-size:14px;
   font-weight:600;
-  color:var(--ink);
+  color:var(--ink-invert);
+  background:var(--accent);
+  padding:6px 14px;
+  border-radius:var(--radius-pill);
 }
 
 /* ================= SUB NAV ================= */
