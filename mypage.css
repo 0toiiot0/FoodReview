@@ -476,9 +476,17 @@ img{ display:block; max-width:100%; }
   font-style:italic;
 }
 
+.bookmark-card__note-edit{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  width:100%;
+}
+
 .bookmark-card__note-input{
   display:block;
   width:100%;
+  min-width:0;
   box-sizing:border-box;
   border:1px solid var(--rule);
   border-radius:8px;
@@ -491,6 +499,26 @@ img{ display:block; max-width:100%; }
 .bookmark-card__note-input:focus{
   outline:none;
   border-color:var(--accent);
+}
+
+.bookmark-card__note-clear{
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;
+  height:22px;
+  border:none;
+  border-radius:50%;
+  background:var(--paper-deep);
+  color:var(--ink-muted);
+  font-size:14px;
+  line-height:1;
+  cursor:pointer;
+}
+.bookmark-card__note-clear:hover{
+  background:var(--accent);
+  color:var(--ink-invert);
 }
 
 .bookmark-card__address{

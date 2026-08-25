@@ -133,8 +133,32 @@
     });
     input.addEventListener("blur", commit);
 
+    const clearBtn = document.createElement("button");
+    clearBtn.type = "button";
+    clearBtn.className = "bookmark-card__note-clear";
+    clearBtn.setAttribute("aria-label", "입력 내용 지우기");
+    clearBtn.textContent = "×";
+    clearBtn.hidden = !input.value;
+
+    clearBtn.addEventListener("mousedown", function (event) {
+      event.preventDefault();
+    });
+    clearBtn.addEventListener("click", function () {
+      input.value = "";
+      clearBtn.hidden = true;
+      input.focus();
+    });
+    input.addEventListener("input", function () {
+      clearBtn.hidden = !input.value;
+    });
+
+    const editWrap = document.createElement("div");
+    editWrap.className = "bookmark-card__note-edit";
+    editWrap.appendChild(input);
+    editWrap.appendChild(clearBtn);
+
     noteWrap.innerHTML = "";
-    noteWrap.appendChild(input);
+    noteWrap.appendChild(editWrap);
     if (autofocus) input.focus();
   }
 
