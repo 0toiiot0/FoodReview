@@ -63,50 +63,6 @@
     return "https://www.google.com/maps/search/?api=1&query=" + row.lat + "," + row.lng;
   }
 
-  function photoUrlFor(row) {
-    return (
-      "/api/place-photo?name=" +
-      encodeURIComponent(row.place_name || "") +
-      "&lat=" +
-      encodeURIComponent(row.lat) +
-      "&lng=" +
-      encodeURIComponent(row.lng) +
-      "&maxWidthPx=800"
-    );
-  }
-
-  function attachPhoto(thumb, emojiEl, row) {
-    fetch(photoUrlFor(row))
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
-        if (!data || !data.found || !data.photoUri) return;
-
-        const img = document.createElement("img");
-        img.alt = row.place_name || "";
-        img.addEventListener("load", function () {
-          if (emojiEl.parentNode === thumb) thumb.removeChild(emojiEl);
-          thumb.classList.remove("card-thumb--icon");
-          thumb.classList.add("card-thumb--photo");
-          img.classList.add("is-loaded");
-
-          const attribution = document.createElement("span");
-          attribution.className = "card-thumb-attribution";
-          attribution.textContent = "사진: " + ((data.attribution && data.attribution[0]) || "Google");
-          thumb.appendChild(attribution);
-        });
-        img.addEventListener("error", function () {
-          if (img.parentNode === thumb) thumb.removeChild(img);
-        });
-        img.src = data.photoUri;
-        thumb.insertBefore(img, thumb.firstChild);
-      })
-      .catch(function () {
-        // 사진을 못 가져와도 이모지가 그대로 남아 있으므로 별도 처리 없이 조용히 무시한다.
-      });
-  }
-
   function createCard(row, rank) {
     const isReal = typeof row.save_count === "number";
 
@@ -144,8 +100,16 @@
       thumb.appendChild(rankBadge);
     }
 
-    if (isReal && typeof row.lat === "number" && typeof row.lng === "number") {
-      attachPhoto(thumb, emoji, row);
+    if (isReal && window.PlacePhotoLoader) {
+      window.PlacePhotoLoader.attach({
+        thumb: thumb,
+        fallbackEl: emoji,
+        name: row.place_name,
+        lat: row.lat,
+        lng: row.lng,
+        iconClass: "card-thumb--icon",
+        photoClass: "card-thumb--photo",
+      });
     }
 
     card.appendChild(thumb);

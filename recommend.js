@@ -76,6 +76,28 @@
     const card = document.createElement("article");
     card.className = "recommend-card";
 
+    const thumb = document.createElement("div");
+    thumb.className = "recommend-card-thumb recommend-card-thumb--icon";
+
+    const emoji = document.createElement("span");
+    emoji.className = "recommend-card-thumb-emoji";
+    emoji.textContent = "🍴";
+    thumb.appendChild(emoji);
+
+    card.appendChild(thumb);
+
+    if (window.PlacePhotoLoader) {
+      window.PlacePhotoLoader.attach({
+        thumb: thumb,
+        fallbackEl: emoji,
+        name: place.place_name,
+        lat: parseFloat(place.y),
+        lng: parseFloat(place.x),
+        iconClass: "recommend-card-thumb--icon",
+        photoClass: "recommend-card-thumb--photo",
+      });
+    }
+
     const name = document.createElement("h3");
     name.className = "recommend-card__name";
     name.textContent = place.place_name || "이름 없음";
